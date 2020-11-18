@@ -1,2 +1,2 @@
 # client-data-service
-Servicio que provee información de cleintes.
+Api desarrollada para el reto tech de Intercorp Retail.
