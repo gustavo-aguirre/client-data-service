@@ -2,6 +2,7 @@ package com.intercorp.example.client.controller;
 
 import com.intercorp.example.client.model.Client;
 import com.intercorp.example.client.model.request.ClientRequest;
+import com.intercorp.example.client.model.response.ClientDtoResponse;
 import com.intercorp.example.client.model.response.KpiCliente;
 import com.intercorp.example.client.service.ClientService;
 import io.swagger.annotations.Api;
@@ -39,13 +40,13 @@ public class ClientController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(kpi);
     }
 
-    @ApiOperation(value = "Retorna listado de clientes")
+    @ApiOperation(value = "Retorna listado de clientes con la fecha probable de muerte")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Lista de personas ", response = Client.class, responseContainer = "List"),
+            @ApiResponse(code = 200, message = "Lista de personas ", response = ClientDtoResponse.class, responseContainer = "List"),
             @ApiResponse(code = 500, message = "Error procesando la Solicitud", response = Exception.class) })
     @GetMapping(value = "/listclientes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Client>> listclientes() throws Exception {
-        List<Client> clients = clientService.findAllClient();
+    public ResponseEntity<List<ClientDtoResponse>> listclientes() throws Exception {
+        List<ClientDtoResponse> clients = clientService.getAllClientsWithDeadDate();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(clients);
     }
 }

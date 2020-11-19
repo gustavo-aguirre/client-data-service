@@ -4,13 +4,17 @@ import com.intercorp.example.client.business.ClientBuilder;
 import com.intercorp.example.client.dao.ClientRepository;
 import com.intercorp.example.client.model.Client;
 import com.intercorp.example.client.model.request.ClientRequest;
+import com.intercorp.example.client.model.response.ClientDtoResponse;
 import com.intercorp.example.client.model.response.KpiCliente;
 import com.intercorp.example.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientServiceImp implements ClientService {
@@ -25,18 +29,23 @@ public class ClientServiceImp implements ClientService {
     }
 
     @Override
-    public List<Client> findAllClient() throws Exception {
-        ArrayList<Client> clients = new ArrayList<Client>();
-        Iterable <Client> it =  clientRepository.findAll();
-        it.forEach(e -> clients.add(e));
+    public List<ClientDtoResponse> getAllClientsWithDeadDate() {
 
-        return clients;
+        final LocalDate today = LocalDate.now();
+        final Random rand = new Random();
+
+        return clientRepository
+                .findAll()
+                .stream()
+                .map(p -> new ClientDtoResponse(p.getNombre(),
+                        p.getApellido(), p.getEdad(), p.getFechaNac(),
+                        today.plusDays(rand.nextInt(3650))))
+                .collect(Collectors.toList());
 
     }
-
     @Override
     public KpiCliente kpideclientes() throws Exception {
-        List<Client> clients = findAllClient();
+        List<Client> clients = clientRepository.findAll();
         double mean = getMean(clients);
         double standardDeviation = getStandardDeviation(clients, mean);
         return KpiCliente.builder().promedio(mean).desviacion(standardDeviation).build();
